@@ -1,17 +1,36 @@
 package com.wildcodeschool.doctor.controller;
 
 import com.wildcodeschool.doctor.model.Doctor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 public class DoctorController {
 
-    @GetMapping("/doctor/")
+    @GetMapping("/doctor/{number}")
+// le mapping s'eapplique à toutes les urls qui commencent par
+// /doctor/{number}
     @ResponseBody
-    public Doctor doctor() {
+// la méthode prends en paramètre un number
+// l'annotation @PathVariable fait le lien entre les 2
+    public Doctor doctor(@PathVariable int number) {
 
-        return null;
+        if (number == 13) {
+// instance de Doctor
+       return new Doctor(13, "Jodie Whittaker");
+// Pour les autres numéros valides -- de 1 à 12 -- renvoie un statut 303.
+        } else if (number >= 1 && number <= 12) {
+            throw new ResponseStatusException(HttpStatus.SEE_OTHER, "redirect web applications to a new URI");
+        } else { 
+// Si le numéro n'est pas valide
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Impossible de récupérer l'incarnation {number}");
+        }
     }
 }
+
+
